@@ -1,15 +1,19 @@
-from flask import Blueprint, render_template, request
-from calculations import beam_pd  # Assuming calculations are in a separate module
+from flask import Flask, render_template, request
+from calculations import beam_pd
 
-bp = Blueprint('main', __name__)
+app = Flask(__name__)
 
-@bp.route('/')
+@app.route('/')
 def index():
     return render_template('index.html')
 
-@bp.route('/generate', methods=['POST'])
-def generate():
-    beam_type = request.form['beam_type']
-    length = int(request.form['length'])
-    df = beam_pd(beam_type, length)
-    return render_template('results.html', df=df)
+@app.route('/calculate', methods=['POST'])
+def calculate():
+  beam_type = request.form['beam_type']
+  length = int(request.form['length'])
+  parts = beam_pd(beam_type, length)
+  html = parts.to_html(index=False, border=0, justify='center')
+  return render_template('result.html', tables=[html], titles=parts.columns.values)
+
+if __name__ == '__main__':
+    app.run()

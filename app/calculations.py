@@ -59,7 +59,10 @@ def beam_pd(beam_type:str, length:int):
         beam_codes[i] = codes['beam'] + str(l)
     beams = np.column_stack((beam_codes, beam))
     joints = np.array([[codes['pin'], pins], [codes['spigot'], spigots]], dtype=object)
-    parts = np.vstack((beams, joints))
+    parts = np.vstack((joints, beams))
     parts = parts[parts[:, 1] != 0]
-    parts = pd.DataFrame(parts, columns=['Code', 'qty'])
+    parts = pd.DataFrame(parts, columns=['Code', 'Qty'])
     return parts
+
+parts = beam_pd('D78', 20)
+print(parts.to_html())
